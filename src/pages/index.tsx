@@ -2299,7 +2299,7 @@ const MAPS = [
 
 type Status = 'search' | 'choosePath' | 'finish';
 
-export default function HomePage() {
+const MapView = ({ onNext }: { onNext: () => void }) => {
   const [messageApi, contextHolder] = message.useMessage();
 
   const info = (message: string) => {
@@ -2415,12 +2415,7 @@ export default function HomePage() {
                     onChange={onChangeInputValue}
                   />
 
-                  <button
-                    className='ml-10 rounded-full bg-blue-500 px-6 py-2 text-white'
-                    onClick={() => {
-                      setCurrentState('choosePath');
-                    }}
-                  >
+                  <button className='ml-10 rounded-full bg-blue-500 px-6 py-2 text-white'>
                     搜索
                   </button>
                 </div>
@@ -2499,7 +2494,7 @@ export default function HomePage() {
                         </div>
                         <Button
                           onClick={() => {
-                            info('成功确认');
+                            onNext();
                           }}
                         >
                           确认上车
@@ -2512,6 +2507,178 @@ export default function HomePage() {
               </div>
             )}
           </div>
+        </section>
+      </main>
+    </Layout>
+  );
+};
+
+const EndView = () => {
+  const [currentImage, setCurrentImage] = React.useState(0);
+
+  const handleAudioEnded = React.useCallback(() => {
+    const nextImage = currentImage + 1;
+    setCurrentImage(nextImage);
+    if (currentImage !== 3) {
+      (
+        document.querySelector(`audio:nth-child(${nextImage + 3})`) as any
+      ).play();
+    }
+  }, [currentImage]);
+
+  const vidRef = React.useRef<HTMLAudioElement>(null);
+  return (
+    <Layout>
+      <main>
+        <section
+          className='relative flex h-screen w-screen flex-col items-center justify-center bg-black'
+          onClick={() => {
+            if (currentImage === 0) {
+              (vidRef.current as any).play();
+            }
+          }}
+        >
+          {currentImage === 0 && (
+            <div className='mb-6 text-center text-[48px] font-bold text-white'>
+              请刷乘车卡
+            </div>
+          )}
+          {currentImage === 1 && (
+            <div className='mb-6 text-center text-[48px] font-bold text-white'>
+              身份识别成功
+            </div>
+          )}
+          {currentImage === 2 && (
+            <div className='mb-6 text-center text-[48px] font-bold text-white'>
+              汽车起步中
+            </div>
+          )}
+          {currentImage === 3 && (
+            <div className='mb-6 text-center text-[48px] font-bold text-white'>
+              驾驶中（有乘客）
+            </div>
+          )}
+          <Image
+            src={`/endimg/${currentImage + 1}.gif`}
+            height={400}
+            width={400}
+            style={{ objectFit: 'contain' }}
+            alt='wow'
+          />
+
+          <audio
+            src='/endaudio/1.mp3'
+            ref={vidRef}
+            onEnded={handleAudioEnded}
+          ></audio>
+          <audio src='/endaudio/2.mp3' onEnded={handleAudioEnded}></audio>
+          <audio src='/endaudio/3.mp3' onEnded={handleAudioEnded}></audio>
+          <audio src='/endaudio/4.mp3'></audio>
+        </section>
+      </main>
+    </Layout>
+  );
+};
+
+export default function HomePage() {
+  const [currentImage, setCurrentImage] = React.useState(0);
+
+  const handleAudioEnded = React.useCallback(() => {
+    const nextImage = currentImage + 1;
+    setCurrentImage(nextImage);
+    if (currentImage !== 2) {
+      (
+        document.querySelector(`audio:nth-child(${nextImage + 2})`) as any
+      ).play();
+    }
+  }, [currentImage]);
+
+  const vidRef = React.useRef<HTMLAudioElement>(null);
+
+  const [currentStage, setCurrentStage] = React.useState<number>(0);
+  if (currentStage === 1) {
+    return (
+      <MapView
+        onNext={() => {
+          setCurrentStage(2);
+        }}
+      />
+    );
+  }
+  if (currentStage === 2) {
+    return <EndView />;
+  }
+  return (
+    <Layout>
+      <main>
+        <section
+          className='relative flex h-screen w-screen flex-col items-center justify-center bg-black'
+          onClick={() => {
+            if (currentImage === 0) {
+              (vidRef.current as any).play();
+            }
+          }}
+        >
+          {currentImage === 0 && (
+            <div className='mb-6 text-center text-[48px] font-bold text-white'>
+              驾驶中（无乘客）
+            </div>
+          )}
+          {currentImage === 1 && (
+            <div className='mb-6 text-center text-[48px] font-bold text-white'>
+              减速行驶中
+            </div>
+          )}
+          {currentImage === 3 && (
+            <div className='mb-[-80px] text-center text-[48px] font-bold text-white'>
+              共享无人智能驾驶
+            </div>
+          )}
+          {currentImage <= 2 && (
+            <Image
+              src={`/img/${currentImage + 1}.gif`}
+              height={400}
+              width={400}
+              style={{ objectFit: 'contain' }}
+              alt='wow'
+            />
+          )}
+          {currentImage === 3 && (
+            <Image
+              src={`/img/${currentImage + 1}.gif`}
+              height={500}
+              width={800}
+              style={{ objectFit: 'contain' }}
+              alt='wow'
+            />
+          )}
+
+          {currentImage === 2 && (
+            <div className='mt-6 text-center text-[48px] font-bold text-white'>
+              刹车
+            </div>
+          )}
+          {currentImage === 3 && (
+            <div
+              className='mt-[-40px] flex h-[80px]  w-[450px] cursor-pointer items-center justify-center rounded-full text-center text-[36px] text-white'
+              style={{
+                background:
+                  'linear-gradient(281.95deg, #336BFE 68.85%, #32D74B 119.53%)',
+              }}
+              onClick={() => {
+                setCurrentStage(1);
+              }}
+            >
+              我要出发
+            </div>
+          )}
+          <audio
+            src='/audio/1.mp3'
+            ref={vidRef}
+            onEnded={handleAudioEnded}
+          ></audio>
+          <audio src='/audio/2.mp3' onEnded={handleAudioEnded}></audio>
+          <audio src='/audio/3.mp3' onEnded={handleAudioEnded}></audio>
         </section>
       </main>
     </Layout>
