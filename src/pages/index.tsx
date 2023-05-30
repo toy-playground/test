@@ -2371,7 +2371,7 @@ export default function HomePage() {
       <Seo />
 
       <main>
-        <section className='flex items-center justify-center bg-white'>
+        <section className='flex items-center justify-center bg-[#EAEAEA]'>
           <div className=' relative '>
             <Image
               src='/images/map.png'
