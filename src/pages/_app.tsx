@@ -14,11 +14,7 @@ import 'antd/dist/reset.css';
 function MyApp({ Component, pageProps }: AppProps) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
-  return (
-    <div style={{ visibility: !mounted ? 'hidden' : '' }}>
-      <Component {...pageProps} />
-    </div>
-  );
+  return mounted && <Component {...pageProps} />;
 }
 
 export default MyApp;

@@ -2472,38 +2472,41 @@ export default function HomePage() {
                   请确认您的行程信息!
                 </div>
                 <div className='fixed bottom-20 left-0 right-0 flex items-center justify-center px-20'>
-                  <div className='flex w-[1000px] items-center justify-evenly'>
-                    <button
-                      className='rounded-full bg-blue-500 px-6 py-2 text-white'
-                      onClick={() => {
-                        showConfirm();
-                      }}
-                    >
-                      我要修改
-                    </button>
-
-                    <div className='flex items-center rounded-xl bg-white p-6'>
-                      <div className='mr-4'>
-                        <div>
-                          {'路程: ' +
-                            currentPath[currentPathIndex].distance +
-                            '米'}
-                        </div>
-                        <div>
-                          {'用时:' +
-                            currentPath[currentPathIndex].duration +
-                            '分钟'}
-                        </div>
-                      </div>
-                      <Button
+                  <div className='flex w-[1000px] items-center justify-between'>
+                    <div className='flex flex-1 items-center justify-center'>
+                      <button
+                        className=' rounded-full bg-blue-500 px-6 py-2 text-white'
                         onClick={() => {
-                          info('成功确认');
+                          showConfirm();
                         }}
                       >
-                        确认上车
-                      </Button>
+                        我要修改
+                      </button>
                     </div>
-                    <div></div>
+                    <div className='flex flex-1 items-center justify-center'>
+                      <div className='flex items-center rounded-xl bg-white p-6'>
+                        <div className='mr-4'>
+                          <div>
+                            {'路程: ' +
+                              currentPath[currentPathIndex].distance +
+                              '米'}
+                          </div>
+                          <div>
+                            {'用时:' +
+                              currentPath[currentPathIndex].duration +
+                              '分钟'}
+                          </div>
+                        </div>
+                        <Button
+                          onClick={() => {
+                            info('成功确认');
+                          }}
+                        >
+                          确认上车
+                        </Button>
+                      </div>
+                    </div>
+                    <div className='flex-1'></div>
                   </div>
                 </div>
               </div>
