@@ -6,6 +6,9 @@ import * as React from 'react';
 
 import Layout from '@/components/layout/Layout';
 import Seo from '@/components/Seo';
+
+import DistanceSVG from '~/svg/distance.svg';
+import TimeSVG from '~/svg/time.svg';
 const { confirm } = Modal;
 
 /**
@@ -2364,6 +2367,17 @@ const MapView = ({ onNext }: { onNext: () => void }) => {
       cancelText: '不修改',
     });
   };
+  // date 变化时触发
+  const [time, setTime] = React.useState(
+    new Date().toLocaleTimeString('chinese', { hour12: false })
+  );
+
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setTime(new Date().toLocaleTimeString('chinese', { hour12: false }));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
   return (
     <Layout>
       {contextHolder}
@@ -2373,6 +2387,9 @@ const MapView = ({ onNext }: { onNext: () => void }) => {
       <main>
         <section className='flex items-center justify-center bg-[#EAEAEA]'>
           <div className=' relative '>
+            <div className='fixed right-4 top-4 text-[20px] text-[#353535]'>
+              {time}
+            </div>
             <Image
               src='/images/map.png'
               alt='map'
@@ -2406,16 +2423,16 @@ const MapView = ({ onNext }: { onNext: () => void }) => {
               ></Image>
             )}
             {currentState === 'search' && (
-              <div className='absolute left-0 right-0 top-10 z-30 flex flex-col items-center justify-center'>
+              <div className='fixed left-0 right-0 top-28 z-30 flex flex-col items-center justify-center'>
                 <div className='flex items-center justify-center'>
                   <input
-                    className=' rounded-full bg-white px-4 py-2'
+                    className=' rounded-full bg-white px-6 py-3 text-[24px]'
                     value={inputValue}
                     placeholder='请输入您的目的地'
                     onChange={onChangeInputValue}
                   />
 
-                  <button className='ml-10 rounded-full bg-blue-500 px-6 py-2 text-white'>
+                  <button className='ml-10 rounded-full bg-blue-500 px-6 py-3 text-[24px] text-white'>
                     搜索
                   </button>
                 </div>
@@ -2453,6 +2470,15 @@ const MapView = ({ onNext }: { onNext: () => void }) => {
                 </div>
               </div>
             )}
+            {currentState === 'search' && (
+              <Image
+                src='/images/bottom.png'
+                alt='start'
+                width={900}
+                height={84}
+                className='fixed bottom-0'
+              ></Image>
+            )}
             <div className='absolute bottom-0 left-0 right-0 top-0 z-10'>
               <canvas
                 id='canvas'
@@ -2462,7 +2488,7 @@ const MapView = ({ onNext }: { onNext: () => void }) => {
               ></canvas>
             </div>
             {currentState === 'finish' && (
-              <div className='absolute bottom-0 left-0 right-0 top-0 z-30 flex w-full flex-col items-center'>
+              <div className='fixed bottom-0 left-0 right-0 top-0 z-30 flex w-full flex-col items-center'>
                 <div className='border-gray z-30 mt-16 rounded-xl border bg-white px-14 py-6 text-[20px] font-bold '>
                   请确认您的行程信息!
                 </div>
@@ -2481,15 +2507,13 @@ const MapView = ({ onNext }: { onNext: () => void }) => {
                     <div className='flex flex-1 items-center justify-center'>
                       <div className='flex items-center rounded-xl bg-white p-6'>
                         <div className='mr-4'>
-                          <div>
-                            {'路程: ' +
-                              currentPath[currentPathIndex].distance +
-                              '米'}
+                          <div className='flex items-center text-[20px]'>
+                            <DistanceSVG className='text-gray mr-2 text-[20px]' />
+                            {currentPath[currentPathIndex].distance + '米'}
                           </div>
-                          <div>
-                            {'用时:' +
-                              currentPath[currentPathIndex].duration +
-                              '分钟'}
+                          <div className='mt-2 flex items-center text-[20px]'>
+                            <TimeSVG className='text-gray mr-2 text-[20px]' />
+                            {currentPath[currentPathIndex].duration + '分钟'}
                           </div>
                         </div>
                         <Button
@@ -2595,7 +2619,7 @@ export default function HomePage() {
 
   const vidRef = React.useRef<HTMLAudioElement>(null);
 
-  const [currentStage, setCurrentStage] = React.useState<number>(0);
+  const [currentStage, setCurrentStage] = React.useState<number>(1);
   if (currentStage === 1) {
     return (
       <MapView
