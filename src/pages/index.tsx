@@ -2619,7 +2619,7 @@ export default function HomePage() {
 
   const vidRef = React.useRef<HTMLAudioElement>(null);
 
-  const [currentStage, setCurrentStage] = React.useState<number>(1);
+  const [currentStage, setCurrentStage] = React.useState<number>(0);
   if (currentStage === 1) {
     return (
       <MapView
