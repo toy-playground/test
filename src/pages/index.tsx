@@ -2626,7 +2626,7 @@ export default function HomePage() {
     setCurrentImage(nextImage);
     if (currentImage !== 2) {
       (
-        document.querySelector(`audio:nth-child(${nextImage + 2})`) as any
+        document.querySelector(`audio:nth-child(${nextImage + 3})`) as any
       ).play();
     }
   }, [currentImage]);
