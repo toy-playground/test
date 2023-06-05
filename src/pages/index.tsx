@@ -2331,7 +2331,7 @@ const MapView = ({ onNext }: { onNext: () => void }) => {
 
       // // 绘制轨迹
       ctx.beginPath();
-      currentPath.forEach((path: any, i) => {
+      currentPath.forEach((path: any, i: number) => {
         if (i === 0) {
           ctx.moveTo(path.path[0][0], path.path[0][1]);
           path.path.forEach((point: any) => {
