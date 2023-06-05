@@ -1,6 +1,6 @@
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import { message } from 'antd';
-import { Button, Modal } from 'antd';
+import { Modal } from 'antd';
 import Image from 'next/image';
 import * as React from 'react';
 
@@ -8,6 +8,7 @@ import Layout from '@/components/layout/Layout';
 import Seo from '@/components/Seo';
 
 import DistanceSVG from '~/svg/distance.svg';
+import EditSVG from '~/svg/edit.svg';
 import TimeSVG from '~/svg/time.svg';
 const { confirm } = Modal;
 
@@ -2330,14 +2331,16 @@ const MapView = ({ onNext }: { onNext: () => void }) => {
 
       // // 绘制轨迹
       ctx.beginPath();
-      currentPath.forEach((path: any) => {
-        ctx.moveTo(path.path[0][0], path.path[0][1]);
-        path.path.forEach((point: any) => {
-          ctx.lineTo(point[0], point[1]);
-        });
-        ctx.lineWidth = 8;
-        ctx.strokeStyle = '#336BFE';
-        ctx.stroke();
+      currentPath.forEach((path: any, i) => {
+        if (i === 0) {
+          ctx.moveTo(path.path[0][0], path.path[0][1]);
+          path.path.forEach((point: any) => {
+            ctx.lineTo(point[0], point[1]);
+          });
+          ctx.lineWidth = 8;
+          ctx.strokeStyle = '#336BFE';
+          ctx.stroke();
+        }
       });
     }
     if (canvasRef.current && !currentPath) {
@@ -2385,13 +2388,13 @@ const MapView = ({ onNext }: { onNext: () => void }) => {
       <Seo />
 
       <main>
-        <section className='flex items-center justify-center bg-[#EAEAEA]'>
+        <section className='flex min-h-screen items-center justify-center bg-black'>
           <div className=' relative '>
-            <div className='fixed right-4 top-4 text-[20px] text-[#353535]'>
+            <div className='fixed right-4 top-4 text-[20px] text-white'>
               {time}
             </div>
             <Image
-              src='/images/map.png'
+              src='/images/map_new.png'
               alt='map'
               width={1000}
               height={1000}
@@ -2496,16 +2499,16 @@ const MapView = ({ onNext }: { onNext: () => void }) => {
                   <div className='flex w-[1000px] items-center justify-between'>
                     <div className='flex flex-1 items-center justify-center'>
                       <button
-                        className=' rounded-full bg-blue-500 px-6 py-2 text-white'
+                        className=' flex items-center rounded-full bg-blue-500 px-6 py-2 text-white'
                         onClick={() => {
                           showConfirm();
                         }}
                       >
-                        我要修改
+                        <EditSVG className='mr-1 ' /> 我要修改
                       </button>
                     </div>
                     <div className='flex flex-1 items-center justify-center'>
-                      <div className='flex items-center rounded-xl bg-white p-6'>
+                      <div className='relative flex h-[100px] items-center rounded-xl bg-white p-6 pr-[80px] shadow-2xl'>
                         <div className='mr-4'>
                           <div className='flex items-center text-[20px]'>
                             <DistanceSVG className='text-gray mr-2 text-[20px]' />
@@ -2516,13 +2519,19 @@ const MapView = ({ onNext }: { onNext: () => void }) => {
                             {currentPath[currentPathIndex].duration + '分钟'}
                           </div>
                         </div>
-                        <Button
+                        <button
+                          className='absolute left-[130px] h-[140px] w-[140px] rounded-full bg-blue-500 px-6 py-2 text-white'
                           onClick={() => {
                             onNext();
                           }}
                         >
                           确认上车
-                        </Button>
+                        </button>
+                        {/* <Button
+                         
+                        >
+                          确认上车
+                        </Button> */}
                       </div>
                     </div>
                     <div className='flex-1'></div>
@@ -2537,7 +2546,7 @@ const MapView = ({ onNext }: { onNext: () => void }) => {
   );
 };
 
-const EndView = () => {
+const EndView = ({ onRefresh }: { onRefresh: () => void }) => {
   const [currentImage, setCurrentImage] = React.useState(0);
 
   const handleAudioEnded = React.useCallback(() => {
@@ -2597,7 +2606,12 @@ const EndView = () => {
           ></audio>
           <audio src='/endaudio/2.mp3' onEnded={handleAudioEnded}></audio>
           <audio src='/endaudio/3.mp3' onEnded={handleAudioEnded}></audio>
-          <audio src='/endaudio/4.mp3'></audio>
+          <audio
+            src='/endaudio/4.mp3'
+            onEnded={() => {
+              onRefresh();
+            }}
+          ></audio>
         </section>
       </main>
     </Layout>
@@ -2630,7 +2644,14 @@ export default function HomePage() {
     );
   }
   if (currentStage === 2) {
-    return <EndView />;
+    return (
+      <EndView
+        onRefresh={() => {
+          setCurrentStage(0);
+          setCurrentImage(0);
+        }}
+      />
+    );
   }
   return (
     <Layout>
@@ -2651,6 +2672,11 @@ export default function HomePage() {
           {currentImage === 1 && (
             <div className='mb-6 text-center text-[48px] font-bold text-white'>
               减速行驶中
+            </div>
+          )}
+          {currentImage === 2 && (
+            <div className='mb-6 text-center text-[48px] font-bold text-white'>
+              刹车
             </div>
           )}
           {currentImage === 3 && (
@@ -2677,11 +2703,6 @@ export default function HomePage() {
             />
           )}
 
-          {currentImage === 2 && (
-            <div className='mt-6 text-center text-[48px] font-bold text-white'>
-              刹车
-            </div>
-          )}
           {currentImage === 3 && (
             <div
               className='mt-[-40px] flex h-[80px]  w-[450px] cursor-pointer items-center justify-center rounded-full text-center text-[36px] text-white'
